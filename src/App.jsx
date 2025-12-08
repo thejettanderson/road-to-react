@@ -51,12 +51,22 @@ const Item = (item) => {
   );
 }
 
-const Search = () => (
-  <div>
-    <label htmlFor="search">Search:
-      <input id="search" type="text" />
-    </label>
-  </div>
-);
+const Search = () => {
+  // perform a task in between
+  const handleChange = (event) => {
+    // synthetic event
+    console.log(event);
+    // value of taget (here: input HTML element)
+    console.log(event.target.value);
+  }
+
+  return (
+    <div>
+      <label htmlFor="search">Search:
+        <input id="search" type="text" onChange={handleChange} />
+      </label>
+    </div>
+  );
+}
 
 export default App;
