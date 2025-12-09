@@ -1,4 +1,7 @@
+import { useState } from 'react';
+
 const App = () => {
+  console.log('App component rendered');
   const stories = [
     {
       title: 'React',
@@ -32,6 +35,7 @@ const App = () => {
 }
 
 const List = (props) => {
+  console.log('List component rendered');
   const { list } = props;
   return (
     <ul>
@@ -43,6 +47,7 @@ const List = (props) => {
 }
 
 const Item = (item) => {
+  console.log('Item component rendered for', item.title);
   const { objectID, url, title, author, num_comments, points } = item;
   return (
     <li key={objectID}>
@@ -57,23 +62,21 @@ const Item = (item) => {
 }
 
 const Search = () => {
-  // perform a task in between
-  const handleChange = (event) => {
-    // synthetic event
-    console.log(event);
-    // value of taget (here: input HTML element)
-    console.log(event.target.value);
-  }
+  console.log('Search component rendered');
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const handleBlur = (event) => {
-    console.log('Input lost focus');
+  const handleChange = (event) => {
+    setSearchTerm(event.target.value);
   }
 
   return (
     <div>
       <label htmlFor="search">Search:
-        <input id="search" type="text" onChange={handleChange} onBlur={handleBlur}/>
+        <input id="search" type="text" onChange={handleChange}/>
       </label>
+      <p>
+        Searching for <strong>{searchTerm}</strong>
+      </p>
     </div>
   );
 }
