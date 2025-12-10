@@ -80,11 +80,11 @@ const Search = ({ search, onSearch }) => {
   console.log('Search component rendered');
 
   return (
-    <div>
+    <>
       <label htmlFor="search">Search:
         <input id="search" type="text" value={search} onChange={onSearch}/>
       </label>
-    </div>
+    </>
   );
 }
 
