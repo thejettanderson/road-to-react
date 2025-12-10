@@ -42,7 +42,7 @@ const App = () => {
     <div>
       <h1>My Hacker Stories</h1>
 
-      <Search onSearch={handleSearch} search={searchTerm}/>
+      <InputWithLabel id="search" label="Search" value={searchTerm} onInputChange={handleSearch}/>
 
       <hr />
 
@@ -76,13 +76,13 @@ const Item = ({ url, title, author, num_comments, points }) => {
   );
 }
 
-const Search = ({ search, onSearch }) => {
-  console.log('Search component rendered');
+const InputWithLabel = ({ id, label, value, type = 'text', onInputChange }) => {
+  console.log('Input with label component rendered');
 
   return (
     <>
-      <label htmlFor="search">Search:
-        <input id="search" type="text" value={search} onChange={onSearch}/>
+      <label htmlFor={id}>{label}
+        <input id={id} type={type} value={value} onChange={onInputChange}/>
       </label>
     </>
   );
