@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const App = () => {
   console.log('App component rendered');
@@ -20,7 +20,11 @@ const App = () => {
       objectID: 1,
     }
   ]
-  const [searchTerm, setSearchTerm] = useState('React');
+  const [searchTerm, setSearchTerm] = useState(localStorage.getItem('search') ?? 'React');
+
+  useEffect(() => {
+    localStorage.setItem('search', searchTerm);
+  }, [searchTerm]);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
