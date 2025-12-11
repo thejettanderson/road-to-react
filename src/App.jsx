@@ -31,7 +31,18 @@ const App = () => {
     }
   ];
 
-  const [stories, setStories] = useState(initialStories);
+  const getAsyncStories = () => new Promise((resolve) => 
+    setTimeout(() => 
+      resolve({ data: { stories: initialStories } }), 2000)
+);
+
+  const [stories, setStories] = useState([]);
+
+  useEffect(() => {
+    getAsyncStories().then(result => {
+      setStories(result.data.stories);
+    });
+  }, []);
 
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
 
