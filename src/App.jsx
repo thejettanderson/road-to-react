@@ -12,7 +12,7 @@ const useStorageState = (key, initialState) => {
 
 const App = () => {
   console.log('App component rendered');
-  const stories = [
+  const initialStories = [
     {
       title: 'React',
       url: 'https://react.dev/',
@@ -29,11 +29,19 @@ const App = () => {
       points: 5,
       objectID: 1,
     }
-  ]
+  ];
+
+  const [stories, setStories] = useState(initialStories);
+
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
+  };
+
+  const handleRemoveStory = (itemToRemove) => {
+    const newStories = stories.filter(story => story.objectID !== itemToRemove.objectID);
+    setStories(newStories);
   }
 
   const searchedStories = stories.filter(story => story.title.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()));
@@ -46,33 +54,38 @@ const App = () => {
 
       <hr />
 
-      <List list={searchedStories} />
+      <List list={searchedStories} onRemoveItem={handleRemoveStory} />
     </div>
   );
 }
 
-const List = ({ list }) => {
+const List = ({ list, onRemoveItem }) => {
   console.log('List component rendered');
   return (
     <ul>
-      {list.map(({ objectID, ...item }) => (
-        <Item key={objectID} {...item} />
+      {list.map((item) => (
+        <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
       ))}
     </ul>
   );
 }
 
-const Item = ({ url, title, author, num_comments, points }) => {
-  console.log('Item component rendered for', title);
+const Item = ({ item, onRemoveItem }) => {
+  console.log('Item component rendered for', item.title);
   return (
-    <li>
-      <span>
-        <a href={url}>{title}</a>
-      </span>
-      <span>{author}</span>
-      <span>{num_comments}</span>
-      <span>{points}</span>
-    </li>
+    <>
+      <li>
+        <span>
+          <a href={item.url}>{item.title}</a>
+        </span>
+        <span>{item.author}</span>
+        <span>{item.num_comments}</span>
+        <span>{item.points}</span>
+        <span>
+          <button type="button" onClick={() => onRemoveItem(item)}>Dismiss</button>
+        </span>
+      </li>
+    </>
   );
 }
 
