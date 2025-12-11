@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const useStorageState = (key, initialState) => {
   const [value, setValue] = useState(localStorage.getItem(key) ?? initialState);
@@ -42,7 +42,7 @@ const App = () => {
     <div>
       <h1>My Hacker Stories</h1>
 
-      <InputWithLabel id="search" value={searchTerm} onInputChange={handleSearch}><strong>Search:</strong></InputWithLabel>
+      <InputWithLabel id="search" value={searchTerm} isFocused onInputChange={handleSearch}><strong>Search:</strong></InputWithLabel>
 
       <hr />
 
@@ -76,14 +76,22 @@ const Item = ({ url, title, author, num_comments, points }) => {
   );
 }
 
-const InputWithLabel = ({ id, value, type = 'text', onInputChange, children }) => {
+const InputWithLabel = ({ id, value, type = 'text', onInputChange, isFocused, children }) => {
   console.log('Input with label component rendered');
+
+  const inputRef = useRef();
+
+  useEffect(() => {
+    if (isFocused && inputRef.current) {
+      inputRef.current.focus();
+    }
+  });
 
   return (
     <>
       <label htmlFor={id}>{children}</label>
       &nbsp;
-      <input id={id} type={type} value={value} onChange={onInputChange}/>
+      <input ref={inputRef}id={id} type={type} value={value} onChange={onInputChange}/>
     </>
   );
 }
