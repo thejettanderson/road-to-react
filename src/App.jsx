@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 
 const useStorageState = (key, initialState) => {
   const [value, setValue] = useState(localStorage.getItem(key) ?? initialState);
@@ -34,14 +34,25 @@ const App = () => {
   const getAsyncStories = () => new Promise((resolve) => 
     setTimeout(() => 
       resolve({ data: { stories: initialStories } }), 2000)
-);
+  );
 
-  const [stories, setStories] = useState([]);
+  const storiesReducer = (state, action) => {
+    switch (action.type) {
+      case 'SET_STORIES':
+        return action.payload;
+      case 'REMOVE_STORY':
+        return state.filter((story) => action.payload.objectID !== story.objectID);
+      default:
+        throw new Error();
+    };
+  };
+
+  const [stories, dispatchStories] = useReducer(storiesReducer, []);
 
   useEffect(() => {
     setIsLoading(true);
     getAsyncStories().then(result => {
-      setStories(result.data.stories);
+      dispatchStories({ type: 'SET_STORIES', payload: result.data.stories });
       setIsLoading(false);
     }).catch(() => setIsError(true));
   }, []);
@@ -55,9 +66,11 @@ const App = () => {
   };
 
   const handleRemoveStory = (itemToRemove) => {
-    const newStories = stories.filter(story => story.objectID !== itemToRemove.objectID);
-    setStories(newStories);
-  }
+    dispatchStories({
+      type: 'REMOVE_STORY',
+      payload: itemToRemove,
+    });
+  };
 
   const searchedStories = stories.filter(story => story.title.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()));
   
