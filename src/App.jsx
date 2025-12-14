@@ -54,22 +54,23 @@ const App = () => {
     isError: false,
   });
 
+  const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
   useEffect(() => {
+    if (!searchTerm) return;
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
-    fetch(`${API_ENDPOINT}react`).then(response => 
+    fetch(`${API_ENDPOINT}${searchTerm}`).then(response => 
       response.json()
     ).then(result => {
       dispatchStories({ type: 'STORIES_FETCH_SUCCESS', payload: result.hits});
     }).catch(() => {
       dispatchStories({ type: 'STORIES_FETCH_FAILURE' });
     });
-  }, []);
-
-  const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
-
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-  };
+  }, [searchTerm]);
 
   const handleRemoveStory = (itemToRemove) => {
     dispatchStories({
@@ -78,8 +79,6 @@ const App = () => {
     });
   };
 
-  const searchedStories = stories.data.filter(story => story.title.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()));
-  
   return (
     <div>
       <h1>My Hacker Stories</h1>
@@ -90,7 +89,7 @@ const App = () => {
 
       {stories.isError && <p>Something went wrong ...</p>}
 
-      {!stories.isError && stories.isLoading ? (<p>Loading ...</p>) : (<List list={searchedStories} onRemoveItem={handleRemoveStory} /> )}
+      {!stories.isError && stories.isLoading ? (<p>Loading ...</p>) : (<List list={stories.data} onRemoveItem={handleRemoveStory} /> )}
     </div>
   );
 }
