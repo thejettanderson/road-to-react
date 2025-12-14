@@ -10,31 +10,10 @@ const useStorageState = (key, initialState) => {
   return [value, setValue];
 };
 
+const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
+
 const App = () => {
   console.log('App component rendered');
-  const initialStories = [
-    {
-      title: 'React',
-      url: 'https://react.dev/',
-      author: 'Jordan Walke',
-      num_comments: 3,
-      points: 4,
-      objectID: 0,
-    },
-    {
-      title: 'Redux',
-      url: 'https://redux.js.org/',
-      author: 'Dan Abramov, Andrew Clark',
-      num_comments: 2,
-      points: 5,
-      objectID: 1,
-    }
-  ];
-
-  const getAsyncStories = () => new Promise((resolve) => 
-    setTimeout(() => 
-      resolve({ data: { stories: initialStories } }), 2000)
-  );
 
   const storiesReducer = (state, action) => {
     switch (action.type) {
@@ -77,8 +56,10 @@ const App = () => {
 
   useEffect(() => {
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
-    getAsyncStories().then(result => {
-      dispatchStories({ type: 'STORIES_FETCH_SUCCESS', payload: result.data.stories});
+    fetch(`${API_ENDPOINT}react`).then(response => 
+      response.json()
+    ).then(result => {
+      dispatchStories({ type: 'STORIES_FETCH_SUCCESS', payload: result.hits});
     }).catch(() => {
       dispatchStories({ type: 'STORIES_FETCH_FAILURE' });
     });
