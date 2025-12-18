@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 
 const useStorageState = (key, initialState) => {
   const [value, setValue] = useState(localStorage.getItem(key) ?? initialState);
@@ -60,7 +60,7 @@ const App = () => {
     setSearchTerm(event.target.value);
   };
 
-  useEffect(() => {
+  const handleFetchStories = useCallback(() => {
     if (!searchTerm) return;
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
     fetch(`${API_ENDPOINT}${searchTerm}`).then(response => 
@@ -71,6 +71,10 @@ const App = () => {
       dispatchStories({ type: 'STORIES_FETCH_FAILURE' });
     });
   }, [searchTerm]);
+
+  useEffect(() => {
+    handleFetchStories();
+  }, [handleFetchStories]);
 
   const handleRemoveStory = (itemToRemove) => {
     dispatchStories({
